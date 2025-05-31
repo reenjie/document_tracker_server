@@ -24,11 +24,11 @@ Route::middleware([CleanInputData::class, DetectSQLInjection::class])->group(fun
     });
 
     Route::controller(PermissionController::class)->group(function () {
-        Route::get('permission', 'index');
-        Route::get('permission/{id}', 'show');
-        Route::post('permission', 'store');
-        Route::put('permission/{id}', 'update');
-        Route::delete('permission/{id}', 'destroy');
+        Route::get('permissions', 'index');
+        Route::get('permissions/{id}', 'show');
+        Route::post('permissions', 'store');
+        Route::put('permissions/{id}', 'update');
+        Route::delete('permissions/{id}', 'destroy');
     });
 
     Route::controller(RoleController::class)->group(function () {

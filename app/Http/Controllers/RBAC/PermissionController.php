@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\RBAC;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Permissions\UpdateRequest;
 use Illuminate\Http\Request;
-
+use App\Models\Permission;
+use App\Http\Requests\Permissions\StoreRequest;
+//use App\Http\Requests\Permissions\UpdateRequest;
 class PermissionController extends Controller
 {
     /**
@@ -12,23 +15,16 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        //
+        $permissions = Permission::all();
+        return response()->json(['message' => 'List of permissions', 'data' => $permissions]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $storeRequest)
     {
-        //
+        $permission = Permission::create($storeRequest->all());
+        return response()->json(['message' => 'Permission created successfully', 'data' => $permission], 201);
     }
 
     /**
@@ -36,23 +32,22 @@ class PermissionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $permission = Permission::find($id);
+        if (!$permission) {
+            return response()->json(['message' => 'Permission not found'], 404);
+        }
+        return response()->json(['message' => 'Permission details retrieved', 'data' => $permission]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRequest $updateRequest, string $id)
     {
-        //
+        $permission = Permission::findOrFail($id);
+        $permission->update($updateRequest->all());
+        return response()->json(['message' => 'Permission updated successfully', 'data' => $permission]);
     }
 
     /**
@@ -60,6 +55,8 @@ class PermissionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $permission = Permission::findOrFail($id);
+        $permission->delete();
+        return response()->json(['message' => 'Permission deleted successfully']);
     }
 }
