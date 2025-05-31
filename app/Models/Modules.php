@@ -16,3 +16,4 @@ class Modules extends Model
     ];
 }
 
+//Slug : this is a unique identifier for the module | it is the route in the API

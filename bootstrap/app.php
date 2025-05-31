@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\DetectSQLInjection;
+use App\Http\Middleware\CleanInputData;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,7 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append('sql_security', DetectSQLInjection::class);
+        $middleware->append(DetectSQLInjection::class);
+        $middleware->append(CleanInputData::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
