@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('guard_name')->default('api');
+            $table->string("method")->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
         });

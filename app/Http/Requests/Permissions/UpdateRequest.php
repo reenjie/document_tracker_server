@@ -26,6 +26,7 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:permissions,name,' . $id,
             'guard_name' => 'required|string|max:255',
+            "method" => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
         ];
     }
@@ -36,6 +37,7 @@ class UpdateRequest extends FormRequest
             'name.required' => 'The name field is required.',
             'guard_name.required' => 'The guard name field is required.',
             'description.max' => 'The description may not be greater than 1000 characters.',
+            'method.max' => 'The method may not be greater than 255 characters.',
         ];
     }
 

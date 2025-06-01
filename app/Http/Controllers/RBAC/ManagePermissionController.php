@@ -4,62 +4,40 @@ namespace App\Http\Controllers\RBAC;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Http\Requests\AssignPermission\AssignRMPRequest;
+use App\Http\Requests\AssignPermission\AssignUserRole;
+use App\Models\RoleModulePermission;
+use App\Models\UserRolePermission;
+use App\Models\User;
+use App\Http\Resources\UserRoleResource;
 class ManagePermissionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function assignRoleModulePermissions(AssignRMPRequest $rmpRequest)
     {
-        //
+        $RMP = RoleModulePermission::create($rmpRequest->all());
+        return response()->json([
+            'message' => 'Permissions assigned successfully.',
+            'data' => $RMP
+        ], 201);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function assignUserRoleModulePermissions(AssignUserRole $assignUserRolerequest)
     {
-        //
+        $UserRole = UserRolePermission::create($assignUserRolerequest->all());
+        return response()->json([
+            'message' => 'RoleModulePermission assigned to user successfully.',
+            'data' => $UserRole
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public static function getUserRoles($user_id)
     {
-        //
-    }
+        $user = User::find($user_id);
+        return response()->json([
+            'message' => 'User roles retrieved successfully.',
+            'data' => new UserRoleResource($user)
+        ], 200);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

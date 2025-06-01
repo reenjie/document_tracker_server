@@ -25,6 +25,7 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:permissions,name',
             'guard_name' => 'required|string|max:255',
+            'method' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
         ];
     }
@@ -34,6 +35,7 @@ class StoreRequest extends FormRequest
         return [
             'name.required' => 'The name field is required.',
             'guard_name.required' => 'The guard name field is required.',
+            'method.max' => 'The method may not be greater than 255 characters.',
             'description.max' => 'The description may not be greater than 1000 characters.',
         ];
     }

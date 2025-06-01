@@ -13,10 +13,8 @@ class CleanInputData
     public function handle(Request $request, Closure $next)
     {
         $cleaned = $this->clean($request->all());
-
         // Replace the current request input with the cleaned version
         $request->merge($cleaned);
-
         return $next($request);
     }
 

@@ -4,17 +4,20 @@ use App\Http\Controllers\RBAC\ManagePermissionController;
 use App\Http\Controllers\RBAC\ModuleController;
 use App\Http\Controllers\RBAC\PermissionController;
 use App\Http\Controllers\RBAC\RoleController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Middleware\CheckAuthCookie;
+use App\Http\Middleware\CheckAuthorization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CleanInputData;
 use App\Http\Middleware\DetectSQLInjection;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+Route::post('signin', [AuthController::class, 'signin']);
 
-
-Route::middleware([CleanInputData::class, DetectSQLInjection::class])->group(function () {
-
+Route::middleware([CleanInputData::class, DetectSQLInjection::class, CheckAuthCookie::class, CheckAuthorization::class])->group(function () {
     Route::controller(ModuleController::class)->group(function () {
         Route::get('modules', 'index');
         Route::get('modules/{id}', 'show');
@@ -40,8 +43,13 @@ Route::middleware([CleanInputData::class, DetectSQLInjection::class])->group(fun
     });
 
     Route::controller(ManagePermissionController::class)->group(function () {
-
+        Route::post("assignPermission", 'assignRoleModulePermissions');
+        Route::post("assignRole/{user_id}/{RMP}", 'assignUserRoleModulePermissions');
+        Route::get("getUserRoles/{user_id}", 'getUserRoles');
     });
+
+
+
 
 
 
