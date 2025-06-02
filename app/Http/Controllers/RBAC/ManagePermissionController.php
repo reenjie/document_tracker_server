@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AssignPermission\AssignRMPRequest;
 use App\Http\Requests\AssignPermission\AssignUserRole;
 use App\Models\RoleModulePermission;
-use App\Models\UserRolePermission;
+use App\Models\UserRoles;
 use App\Models\User;
 use App\Http\Resources\UserRoleResource;
 class ManagePermissionController extends Controller
@@ -23,7 +23,7 @@ class ManagePermissionController extends Controller
 
     public function assignUserRoleModulePermissions(AssignUserRole $assignUserRolerequest)
     {
-        $UserRole = UserRolePermission::create($assignUserRolerequest->all());
+        $UserRole = UserRoles::create($assignUserRolerequest->all());
         return response()->json([
             'message' => 'RoleModulePermission assigned to user successfully.',
             'data' => $UserRole

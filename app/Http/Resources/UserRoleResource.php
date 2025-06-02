@@ -18,46 +18,45 @@ class UserRoleResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "email" => $this->email,
-            'roles' => collect($this->rolePermissions->map(function ($permission) {
-                $role = $permission->roleModulePermission->role;
-                if ($role->is_active) {
-                    return [
-                        'id' => $role->id,
-                        'name' => $role->name,
-                        'description' => $role->description,
-                    ];
-                }
-                return null;
-            })->filter())->unique('id')->values(),
+            'role' => $this->rolePermissions->map(function ($permission) {
+                return $permission->getRoles->name;
+            })->values(),
             "roles_modules_permissions" => $this->rolePermissions
-                ->groupBy(function ($permission) {
-                    return $permission->roleModulePermission->module->id;
+                ->flatMap(function ($permission) {
+                    $role = $permission->getRoles;
+                    return $role->getAccessibleModules->map(function ($modulePermission) use ($role) {
+                        return [
+                            'role' => $role,
+                            'module' => $modulePermission->module,
+                            'permission' => $modulePermission->permission,
+                        ];
+                    });
+                })
+                ->groupBy(function ($item) {
+                    return $item['module']->id ?? null;
                 })
                 ->map(function ($group) {
                     $first = $group->first();
-                    $module = $first->roleModulePermission->module;
+                    $role = $first['role'];
+                    $module = $first['module'];
 
-                    // Collect and remove duplicate permissions based on ID
-                    $permissions = $group
-                        ->map(function ($permission) {
-                        return $permission->roleModulePermission->permission;
-                    })
-                        ->unique('id') // ensure uniqueness by permission ID
-                        ->values();    // reindex the array
-        
+                    $permissions = collect($group)
+                        ->map(fn($item) => $item['permission'])
+                        ->filter()
+                        ->unique('id')
+                        ->values();
+
                     return [
-                        'role' => $first->roleModulePermission->role->name,
-                        'module' => $module->name,
-                        'slug' => $module->slug,
-                        'description' => $module->description,
-                        'methods' => $permissions->map(function ($permit) {
-                            return $permit->method;
-                        })->values(),
-                        'permissions' => $permissions->map(function ($permit) {
-                            return $permit->name;
-                        })->values(),
+                        'role' => $role->name ?? null,
+                        'module' => $module->name ?? null,
+                        'slug' => $module->slug ?? null,
+                        'description' => $module->description ?? null,
+                        'guards' => $permissions->map(fn($p) => $p->guard_name)->values(),
+                        'methods' => $permissions->map(fn($p) => $p->method)->values(),
+                        'permissions' => $permissions->map(fn($p) => $p->name)->values(),
                     ];
-                })->values(),
+                })
+                ->values(),
             'account_created_at' => $this->created_at,
             'account_updated_at' => $this->updated_at,
         ];

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Cookie;
-
+use App\Http\Controllers\Auth\AuthController;
 use Carbon\Carbon;
 
 class CheckAuthCookie
@@ -34,13 +34,7 @@ class CheckAuthCookie
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
         if ($tokenRecord->expires_at && $tokenRecord->expires_at->isPast()) {
-            return response()->json(['message' => 'Token expired'], Response::HTTP_UNAUTHORIZED)->cookie(
-                Cookie::forget(config('createToken.cookieName'))->withPath(config('createToken.cookiePath'))
-                    ->withDomain(config('createToken.cookieDomain'))
-                    ->withSecure(config('createToken.cookieSecure'))
-                    ->withHttpOnly(config('createToken.cookieHttpOnly'))
-                    ->withSameSite('lax')
-            );
+            return AuthController::logout("Token expired");
         }
         if ($tokenRecord->expires_at) {
             $tokenRecord->expires_at = Carbon::parse($tokenRecord->expires_at)->addMinute();

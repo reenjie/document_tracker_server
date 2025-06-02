@@ -12,5 +12,10 @@ class Roles extends Model
         'is_active',
     ];
 
+    public function getAccessibleModules()
+    {
+        return $this->hasMany(RoleModulePermission::class, 'role_id');
+    }
+
 
 }

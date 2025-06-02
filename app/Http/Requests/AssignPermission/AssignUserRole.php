@@ -32,11 +32,11 @@ class AssignUserRole extends FormRequest
                 'integer',
                 'exists:users,id',
             ],
-            'user_role_permission_id' => [
+            'role_id' => [
                 'required',
                 'integer',
-                'exists:role_module_permissions,id',
-                Rule::unique('user_role_permissions') // <- your pivot or mapping table
+                'exists:roles,id',
+                Rule::unique('user_roles') // <- your pivot or mapping table
                     ->where(function ($query) {
                         return $query->where('user_id', request('user_id'));
                     }),
@@ -48,8 +48,8 @@ class AssignUserRole extends FormRequest
     {
         return [
             'user_id.required' => 'The user ID is required.',
-            'RMP.required' => 'The Role Module Permission ID is required.',
-            'RMP.exists' => 'The selected Role Module Permission ID is invalid.',
+            'role_id.required' => 'The Role ID is required.',
+            'role_id.exists' => 'The selected Role ID is invalid.',
         ];
     }
 
@@ -58,7 +58,7 @@ class AssignUserRole extends FormRequest
         // You can manipulate the data before validation if needed
         $this->merge([
             'user_id' => (int) $this->route('user_id'),
-            'user_role_permission_id' => (int) $this->route('RMP'),
+            'role_id' => (int) $this->route('role_id'),
         ]);
     }
 

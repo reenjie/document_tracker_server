@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Http\Controllers\RBAC\ManagePermissionController;
 use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\Cookie;
 class AuthController extends Controller
 {
     public function signin(SigninRequest $signinRequest)
@@ -52,4 +53,17 @@ class AuthController extends Controller
 
         return $tokenRecord->tokenable;
     }
+
+    public static function logout($message = "Logged out successfully")
+    {
+        $cookie = Cookie::forget(config('createToken.cookieName'))
+            ->withPath(config('createToken.cookiePath'))
+            ->withDomain(config('createToken.cookieDomain'))
+            ->withSecure(config('createToken.cookieSecure'))
+            ->withHttpOnly(config('createToken.cookieHttpOnly'))
+            ->withSameSite('lax');
+
+        return response()->json(['message' => $message])->cookie($cookie);
+    }
+
 }

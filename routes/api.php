@@ -16,7 +16,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::post('signin', [AuthController::class, 'signin']);
-
+Route::post('signout', [AuthController::class, 'logout']);
 Route::middleware([CleanInputData::class, DetectSQLInjection::class, CheckAuthCookie::class, CheckAuthorization::class])->group(function () {
     Route::controller(ModuleController::class)->group(function () {
         Route::get('modules', 'index');
@@ -43,12 +43,10 @@ Route::middleware([CleanInputData::class, DetectSQLInjection::class, CheckAuthCo
     });
 
     Route::controller(ManagePermissionController::class)->group(function () {
-        Route::post("assignPermission", 'assignRoleModulePermissions');
-        Route::post("assignRole/{user_id}/{RMP}", 'assignUserRoleModulePermissions');
-        Route::get("getUserRoles/{user_id}", 'getUserRoles');
+        Route::post("settings/assignPermission", 'assignRoleModulePermissions');
+        Route::post("settings/assignRole/{user_id}/{role_id}", 'assignUserRoleModulePermissions');
+        Route::get("settings/getUserRoles/{user_id}", 'getUserRoles');
     });
-
-
 
 
 

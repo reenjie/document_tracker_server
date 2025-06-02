@@ -48,6 +48,6 @@ class User extends Authenticatable
 
     public function rolePermissions()
     {
-        return $this->hasMany(UserRolePermission::class);
+        return $this->hasMany(UserRoles::class);
     }
 }
